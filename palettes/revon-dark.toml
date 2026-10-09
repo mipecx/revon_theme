@@ -16,18 +16,19 @@ fg_main     = "#e1e4ea" # Primary text and code (APCA Lc 89)
 fg_bright   = "#ffffff" # Bright text, bold accents
 
 [accents]
-# Accent colors tuned in Oklab (L 0.68–0.78 — not equal-luminance)
-red         = "#ea696c" # Errors, diff deletion
-orange      = "#e88d67" # Constants, numbers, operators
-yellow      = "#dcb15d" # Data types, warnings, classes
-green       = "#7ec18c" # Strings, diff addition
-cyan        = "#5ebfbe" # Regular expressions, special characters
-blue        = "#6ca3f0" # Functions, methods, key identifiers
-purple      = "#b388eb" # Control flow keywords (return, if, yield)
-magenta     = "#e070b4" # Properties, parameters, special variables
+# Accent colors in Oklab; chroma boosted x1.3 for perceptual separation
+# (min Oklab dE between syntax colors: 10.8 -> 13.7)
+red         = "#fe515d" # Errors, diff deletion
+orange      = "#f9824e" # Constants, numbers, operators
+yellow      = "#e6ae2e" # Data types, warnings, classes
+green       = "#6bc681" # Strings, diff addition
+cyan        = "#2dc4c3" # Regular expressions, special characters
+blue        = "#5fa2ff" # Functions, methods, key identifiers
+purple      = "#b97eff" # Control flow keywords (return, if, yield)
+magenta     = "#f15cbb" # Properties, parameters, special variables
 
 [ui]
 border      = "#2d333f"
 selection   = "#343d4f"
-cursor      = "#6ca3f0"
-links       = "#5ebfbe"
+cursor      = "#5fa2ff"
+links       = "#2dc4c3"

@@ -15,18 +15,19 @@ fg_main     = "#1a1d24" # Primary text and code (APCA Lc 98)
 fg_bright   = "#0f1115" # High-contrast text
 
 [accents]
-# Accents for light background (Oklab L 0.52–0.61; red/orange/yellow/green/cyan < AA 4.5 as text)
-red         = "#d03e43"
-orange      = "#c85f28"
-yellow      = "#966f00"
-green       = "#2d854e"
-cyan        = "#128284"
-blue        = "#2b6cb0"
-purple      = "#7a48ba"
-magenta     = "#b83280"
+# Accents for light background (Oklab; "vivid" set — darkened + saturated)
+# APCA vs bg_main >= 67 (orange lowest); min Oklab dE between syntax colors: 15.6
+red         = "#d3072c"
+orange      = "#c94a00"
+yellow      = "#936400"
+green       = "#007f3d"
+cyan        = "#007c7f"
+blue        = "#0062b4"
+purple      = "#7631c0"
+magenta     = "#b9007a"
 
 [ui]
 border      = "#d0d5e0"
 selection   = "#d8e0f0"
-cursor      = "#2b6cb0"
-links       = "#128284"
+cursor      = "#0062b4"
+links       = "#007c7f"

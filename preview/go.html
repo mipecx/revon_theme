@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" data-syntax="calm" data-lacc="vivid">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Revon — Go preview</title>
+<style>
+  :root {
+    --radius: 12px;
+  }
+  html[data-theme="dark"] {
+    --bg:        #16181d;
+    --panel:     #111317;
+    --surface:   #21252d;
+    --highlight: #2d333f;
+    --border:    #2d333f;
+    --selection: #343d4f;
+    --text:      #e1e4ea;
+    --bright:    #ffffff;
+    --muted:     #636e82;
+    --subtle:    #9da8bd;
+
+    --red:     #fe515d;
+    --orange:  #f9824e;
+    --yellow:  #e6ae2e;
+    --green:   #6bc681;
+    --cyan:    #2dc4c3;
+    --blue:    #5fa2ff;
+    --purple:  #b97eff;
+    --magenta: #f15cbb;
+  }
+  html[data-theme="light"] {
+    --bg:        #f5f6f8;
+    --panel:     #e4e7ec;
+    --surface:   #eef0f4;
+    --highlight: #e0e4ec;
+    --border:    #d0d5e0;
+    --selection: #d8e0f0;
+    --text:      #1a1d24;
+    --bright:    #0f1115;
+    --muted:     #8a94a6;
+    --subtle:    #5c6475;
+
+    --red:     #d03e43;
+    --orange:  #c85f28;
+    --yellow:  #966f00;
+    --green:   #2d854e;
+    --cyan:    #128284;
+    --blue:    #2b6cb0;
+    --purple:  #7a48ba;
+    --magenta: #b83280;
+  }
+
+  /* Light accents: "vivid" = same hues, darkened + more saturated (WCAG >= ~4.4 vs bg) */
+  html[data-theme="light"][data-lacc="vivid"] {
+    --red:     #d3072c;
+    --orange:  #c94a00;
+    --yellow:  #936400;
+    --green:   #007f3d;
+    --cyan:    #007c7f;
+    --blue:    #0062b4;
+    --purple:  #7631c0;
+    --magenta: #b9007a;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    transition: background .2s, color .2s;
+  }
+  .wrap { max-width: 940px; margin: 0 auto; padding: 32px 20px 64px; }
+
+  header {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 20px; flex-wrap: wrap;
+  }
+  h1 { font-size: 20px; margin: 0; font-weight: 650; letter-spacing: .2px; }
+  .tag {
+    font-size: 12px; color: var(--muted);
+    border: 1px solid var(--border); border-radius: 999px; padding: 3px 10px;
+  }
+  .spacer { flex: 1; }
+  .toggle { display: flex; gap: 6px; }
+  button {
+    font: inherit; font-size: 13px; cursor: pointer;
+    color: var(--text); background: var(--surface);
+    border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px;
+    transition: background .15s, border-color .15s;
+  }
+  button:hover { background: var(--highlight); }
+  html[data-theme="dark"]  button[data-set="dark"],
+  html[data-theme="light"] button[data-set="light"] {
+    border-color: var(--blue); color: var(--blue);
+  }
+  html[data-syntax="vibrant"] button[data-syn="vibrant"],
+  html[data-syntax="calm"]    button[data-syn="calm"] {
+    border-color: var(--blue); color: var(--blue);
+  }
+  html[data-lacc="muted"] button[data-lacc="muted"],
+  html[data-lacc="vivid"] button[data-lacc="vivid"] {
+    border-color: var(--blue); color: var(--blue);
+  }
+  .toggle label { font-size: 12px; color: var(--muted); align-self: center; margin-right: 2px; }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,.18);
+  }
+  .bar {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 14px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    font-size: 12px; color: var(--muted);
+  }
+  .dot { width: 11px; height: 11px; border-radius: 50%; }
+  .dot.r { background: var(--red); }
+  .dot.y { background: var(--yellow); }
+  .dot.g { background: var(--green); }
+  .filename { margin-left: 6px; }
+
+  pre {
+    margin: 0; padding: 18px 20px;
+    overflow: auto;
+    font-family: "JetBrains Mono", "Fira Code", ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 13px; line-height: 1.5;
+    tab-size: 4; -moz-tab-size: 4;
+    color: var(--text);
+    background: var(--bg);
+  }
+  code { font: inherit; }
+
+  /* Go tokens */
+  .c-cm    { color: var(--muted); font-style: italic; }
+  .c-kw    { color: var(--red); }
+  .c-fn    { color: var(--blue); }
+  .c-fndef { color: var(--blue); }
+  .c-name  { color: var(--purple); }
+  .c-bty   { color: var(--red); }
+  .c-ty    { color: var(--purple); }
+  .c-str   { color: var(--green); }
+  .c-num   { color: var(--yellow); }
+  .c-op    { color: var(--subtle); }
+  .c-prop  { color: var(--magenta); }
+  .c-const { color: var(--yellow); }
+  .c-pkg   { color: var(--text); }
+
+  /* Calm mode: fields / packages fall back to plain text. */
+  html[data-syntax="calm"] .c-prop,
+  html[data-syntax="calm"] .c-pkg { color: var(--text); }
+  html[data-syntax="calm"] .c-op { color: var(--subtle); }
+
+  .swatches { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 18px; }
+  .sw {
+    width: 26px; height: 26px; border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+  .legend { margin-top: 10px; font-size: 12px; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Revon</h1>
+    <span class="tag">Go preview</span>
+    <span class="spacer"></span>
+    <div class="toggle">
+      <label>syntax</label>
+      <button data-syn="calm">Calm</button>
+      <button data-syn="vibrant">Vibrant</button>
+    </div>
+    <div class="toggle">
+      <label>light</label>
+      <button data-lacc="muted">muted</button>
+      <button data-lacc="vivid">vivid</button>
+    </div>
+    <div class="toggle">
+      <button data-set="dark">Dark</button>
+      <button data-set="light">Light</button>
+    </div>
+  </header>
+
+  <div class="card">
+    <div class="bar">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="filename">main.go</span>
+    </div>
+<pre><code><span class="c-cm">// Package main is a short demo of the Revon theme.</span>
+<span class="c-kw">package</span> main
+
+<span class="c-kw">import</span> (
+    <span class="c-str">"context"</span>
+    <span class="c-str">"fmt"</span>
+    <span class="c-str">"strings"</span>
+)
+
+<span class="c-kw">const</span> <span class="c-name">MaxWorkers</span> <span class="c-op">=</span> <span class="c-num">8</span>
+<span class="c-kw">const</span> <span class="c-name">greeting</span> <span class="c-op">=</span> <span class="c-str">"Hello, Revon!"</span>
+
+<span class="c-cm">// Vacancy is a job posting.</span>
+<span class="c-kw">type</span> <span class="c-name">Vacancy</span> <span class="c-kw">struct</span> {
+    <span class="c-prop">ID</span>     <span class="c-bty">int</span>
+    <span class="c-prop">Title</span>  <span class="c-bty">string</span>
+    <span class="c-prop">Remote</span> <span class="c-bty">bool</span>
+    <span class="c-prop">Salary</span> <span class="c-bty">float64</span>
+    <span class="c-prop">Tags</span>   []<span class="c-bty">string</span>
+}
+
+<span class="c-kw">type</span> <span class="c-name">Fetcher</span> <span class="c-kw">interface</span> {
+    <span class="c-fndef">Fetch</span>(ctx <span class="c-ty">context.Context</span>, q <span class="c-bty">string</span>) ([]<span class="c-ty">Vacancy</span>, <span class="c-bty">error</span>)
+}
+
+<span class="c-kw">func</span> (v <span class="c-ty">Vacancy</span>) <span class="c-fndef">String</span>() <span class="c-bty">string</span> {
+    remote <span class="c-op">:=</span> <span class="c-str">"office"</span>
+    <span class="c-kw">if</span> v.<span class="c-prop">Remote</span> {
+        remote <span class="c-op">=</span> <span class="c-str">"remote"</span>
+    }
+    <span class="c-kw">return</span> <span class="c-pkg">fmt</span>.<span class="c-fn">Sprintf</span>(<span class="c-str">"%s (%s) — %.1f"</span>, v.<span class="c-prop">Title</span>, remote, v.<span class="c-prop">Salary</span>)
+}
+
+<span class="c-kw">func</span> <span class="c-fndef">Filter</span>(vs []<span class="c-ty">Vacancy</span>, pred <span class="c-kw">func</span>(<span class="c-ty">Vacancy</span>) <span class="c-bty">bool</span>) []<span class="c-ty">Vacancy</span> {
+    out <span class="c-op">:=</span> <span class="c-fn">make</span>([]<span class="c-ty">Vacancy</span>, <span class="c-num">0</span>, <span class="c-fn">len</span>(vs))
+    <span class="c-kw">for</span> _, v <span class="c-op">:=</span> <span class="c-kw">range</span> vs {
+        <span class="c-kw">if</span> <span class="c-fn">pred</span>(v) {
+            out <span class="c-op">=</span> <span class="c-fn">append</span>(out, v)
+        }
+    }
+    <span class="c-kw">return</span> out
+}
+
+<span class="c-kw">func</span> <span class="c-fndef">main</span>() {
+    vacancies <span class="c-op">:=</span> []<span class="c-ty">Vacancy</span>{
+        {<span class="c-prop">ID</span>: <span class="c-num">1</span>, <span class="c-prop">Title</span>: <span class="c-str">"Go Developer"</span>, <span class="c-prop">Remote</span>: <span class="c-const">true</span>, <span class="c-prop">Salary</span>: <span class="c-num">150000.5</span>, <span class="c-prop">Tags</span>: []<span class="c-bty">string</span>{<span class="c-str">"go"</span>, <span class="c-str">"kubernetes"</span>}},
+        {<span class="c-prop">ID</span>: <span class="c-num">2</span>, <span class="c-prop">Title</span>: <span class="c-str">"SRE"</span>, <span class="c-prop">Remote</span>: <span class="c-const">false</span>, <span class="c-prop">Salary</span>: <span class="c-num">180000.0</span>, <span class="c-prop">Tags</span>: []<span class="c-bty">string</span>{<span class="c-str">"linux"</span>, <span class="c-str">"terraform"</span>}},
+    }
+
+    remote <span class="c-op">:=</span> <span class="c-fn">Filter</span>(vacancies, <span class="c-kw">func</span>(v <span class="c-ty">Vacancy</span>) <span class="c-bty">bool</span> {
+        <span class="c-kw">return</span> v.<span class="c-prop">Remote</span> <span class="c-op">&amp;&amp;</span> v.<span class="c-prop">Salary</span> <span class="c-op">&gt;</span> <span class="c-num">100000</span>
+    })
+
+    <span class="c-kw">for</span> i, v <span class="c-op">:=</span> <span class="c-kw">range</span> remote {
+        <span class="c-pkg">fmt</span>.<span class="c-fn">Printf</span>(<span class="c-str">"%d. %s\n"</span>, i<span class="c-op">+</span><span class="c-num">1</span>, <span class="c-pkg">strings</span>.<span class="c-fn">ToUpper</span>(v.<span class="c-fn">String</span>()))
+    }
+}</code></pre>
+  </div>
+
+  <div class="swatches">
+    <span class="sw" style="background:#e1e4ea"></span>
+    <span class="sw" style="background:#636e82"></span>
+    <span class="sw" style="background:#9da8bd"></span>
+    <span class="sw" style="background:#ea696c"></span>
+    <span class="sw" style="background:#e88d67"></span>
+    <span class="sw" style="background:#dcb15d"></span>
+    <span class="sw" style="background:#7ec18c"></span>
+    <span class="sw" style="background:#5ebfbe"></span>
+    <span class="sw" style="background:#6ca3f0"></span>
+    <span class="sw" style="background:#b388eb"></span>
+    <span class="sw" style="background:#e070b4"></span>
+  </div>
+  <div class="legend">fg_main · muted · subtle · red · orange · yellow · green · cyan · blue · purple · magenta</div>
+</div>
+
+<script>
+  document.querySelectorAll('[data-set]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      document.documentElement.dataset.theme = b.dataset.set;
+    });
+  });
+  document.querySelectorAll('[data-syn]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      document.documentElement.dataset.syntax = b.dataset.syn;
+    });
+  });
+  document.querySelectorAll('[data-lacc]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      document.documentElement.dataset.lacc = b.dataset.lacc;
+    });
+  });
+</script>
+</body>
+</html>
