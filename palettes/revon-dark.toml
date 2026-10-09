@@ -10,15 +10,15 @@ bg_main     = "#16181d" # Main editor and terminal background
 bg_surface  = "#21252d" # Line highlighting, floating window backgrounds
 bg_highlight= "#2d333f" # Visual selection, active tabs
 
-fg_muted    = "#636e82" # Comments, icons, line numbers (APCA Lc 25; WCAG 3.45 — below AA)
+fg_muted    = "#828ea3" # Comments, icons, line numbers (APCA Lc 44; WCAG 5.4 AA)
 fg_subtle   = "#9da8bd" # Inactive elements, punctuation
 fg_main     = "#e1e4ea" # Primary text and code (APCA Lc 89)
 fg_bright   = "#ffffff" # Bright text, bold accents
 
 [accents]
 # Accent colors in Oklab; chroma boosted x1.3 for perceptual separation
-# (min Oklab dE between syntax colors: 10.8 -> 13.7)
-red         = "#fe515d" # Errors, diff deletion
+# (min Oklab dE between syntax colors: 10.8 -> 13.7); red raised to APCA >= 50
+red         = "#ff676d" # Errors, diff deletion
 orange      = "#f9824e" # Constants, numbers, operators
 yellow      = "#e6ae2e" # Data types, warnings, classes
 green       = "#6bc681" # Strings, diff addition
