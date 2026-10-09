@@ -1,0 +1,32 @@
+[meta]
+name = "Revon Light"
+variant = "light"
+author = "mipecx"
+
+[base]
+bg_dark     = "#e4e7ec" # Inactive panels, statusbars
+bg_main     = "#f5f6f8" # Primary editor background
+bg_surface  = "#eef0f4" # Line highlighting, floating panels
+bg_highlight= "#e0e4ec" # Visual selection
+
+fg_muted    = "#8a94a6" # Comments, subtle text (APCA Lc 52 on bg_main)
+fg_subtle   = "#5c6475" # Punctuation, subtle borders
+fg_main     = "#1a1d24" # Primary text and code (APCA Lc 98)
+fg_bright   = "#0f1115" # High-contrast text
+
+[accents]
+# Accents for light background (Oklab L 0.52–0.61; red/orange/yellow/green/cyan < AA 4.5 as text)
+red         = "#d03e43"
+orange      = "#c85f28"
+yellow      = "#966f00"
+green       = "#2d854e"
+cyan        = "#128284"
+blue        = "#2b6cb0"
+purple      = "#7a48ba"
+magenta     = "#b83280"
+
+[ui]
+border      = "#d0d5e0"
+selection   = "#d8e0f0"
+cursor      = "#2b6cb0"
+links       = "#128284"
